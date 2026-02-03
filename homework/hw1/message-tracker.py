@@ -77,20 +77,59 @@ def aggregate_by_day(data, days):
     # loop through each clients message count
     for message_count in data.values():
         # loop through each days count with index
-        for i, count in enumerate(message_counts):
+        for i, count in enumerate(message_count):
             # add count to appropriate day
-            day_total[days[i]] += count
+            day_totals[days[i]] += count
     return day_totals
     
-def test_aggregate_by_day_common()
+def test_aggregate_by_day_common():
+    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    data = {
+        'A': [1, 2, 3, 4, 5, 6, 7],
+        'B': [1, 1, 1, 1, 1, 1, 1]
+    }
+    result = aggregate_by_day(data,days)
+    expected = {
+        'Sunday': 2, 'Monday': 3, 'Tuesday': 4, 'Wednesday': 5,
+        'Thursday': 6, 'Friday': 7, 'Saturday': 8
+    }
+    assert result == expected, f"Expected {expected}, got {result}"
+    print("test_aggregate_by_day_common PASSED")
 
-def test_aggregate_by_day_edge()
+def test_aggregate_by_day_edge():
+    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    data = {
+        'A': [0, 2, 3, 4, 5, 6, 7],
+        'B': [0, 1, 1, 1, 1, 1, 1]
+    }
+    result = aggregate_by_day(data, days)
+    expected = {
+        'Sunday': 0, 'Monday': 3, 'Tuesday': 4, 'Wednesday': 5,
+        'Thursday': 6, 'Friday': 7, 'Saturday': 8
+    }
+    assert result == expected, f"Expected {expected}, got {result}"
+    print("test_aggregate_by_day_edge PASSED")
 
-def test_aggregate_by_day_special()    
+
+def test_aggregate_by_day_special():
+    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    data = {}
+    result = aggregate_by_day(data, days)
+    expected = {
+        'Sunday': 0, 'Monday': 0, 'Tuesday': 0, 'Wednesday': 0,
+        'Thursday': 0, 'Friday': 0, 'Saturday': 0
+    }
+    assert result == expected, f"Expected {expected}, got {result}"
+    print("test_aggregate_by_day_special PASSED")
+
     
     
     
-# if __name__ == "__main__":
-#     test_aggregate_by_client_common()
-#     test_aggregate_by_client_edge()
-#     test_aggregate_by_client_special()
+if __name__ == "__main__":
+    test_aggregate_by_client_common()
+    test_aggregate_by_client_edge()
+    test_aggregate_by_client_special()
+    
+    test_aggregate_by_day_common()
+    test_aggregate_by_day_edge()
+    test_aggregate_by_day_special()
