@@ -1,40 +1,139 @@
 """
-Message Tracker Program
-Purpose: Help Jane visualize client message data through horizontal histograms
-Author: Yuri
-Date: 2026-02-02
+HW1
 
-INPUTS:
-    client names (at least 5)
-    message counts for each client for 7 days (sunday - saturday)
 
-OUTPUTS:
-    histogram 1: total messages by client
-    histogram 2: total messages by day of week
+Usage of LLMs (ChatGPT):
 
-CONSTRAINTS:
-    3 unit tests per function (common, edge, special cases)
+- Help with input sanity checks in read_input()
+
+
 """
 
 
+DAYS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')
+
+TEST_DATA = {
+    'Apple': [1, 2, 3, 4, 5, 6, 7],
+    'Banana': [2, 2, 2, 2, 2, 2, 2],
+    'Carrot': [3, 4, 5, 6, 7, 8, 9]
+}
+
+SEPARATOR = '-' * 25
+
+# Task: Read and organize user input
+# Solution: Read input with basic sanity checks, organize it in a form of a dict with client names as keys.  
+def read_input():
+    input_data = {}
+
+    while True:
+        try:
+            total_clients = int(input('Enter the total number of clients: '))
+            if total_clients < 5:
+                print("Error: Must enter at least 5 clients")
+                continue
+            break
+        except ValueError:
+            print("Error: Please enter an integer")
+
+    for i in range(total_clients):
+        client = input(f'Enter the name for client {i+1}: ')
+
+        while True:
+            raw = input(
+                'Enter the number of messages for each day of the week (7 integers, space-separated): '
+            ).split()
+            # check count
+            if len(raw) != 7:
+                print("Error: Please enter exactly 7 numbers.")
+                continue
+            try:
+                messages = list(map(int, raw))
+            except ValueError:
+                print("Error: All values must be integers.")
+                continue
+            
+            # check for negative values
+            if any(msg < 0 for msg in messages):
+                print("Error: Message counts cannot be negative.")
+                continue
+            
+            # passed all checks
+            break
+
+        input_data[client] = messages
+
+    return input_data
+
+
+# Task: Aggregate the number of calls by client
+# Solution: Create a dict with keys = client names and values = sum of values of input dict
 def aggregate_by_client(data):
-    """
-    Purpose: Calculate total messages sent to each client
-    Parameters: data (dict) - dictionary with client names as keys and
-                lists of daily message counts as values
-    Returns: dict - dictionary with client names as keys and total
-             message counts as values
-    Author: Yuri
-    Date: 2026-02-02
-    """
     totals = {}
     for client_name, message_counts in data.items():
         total = sum(message_counts)
         totals[client_name] = total
     return totals
-#
-# UNIT TESTS aggregate_by_client
-#
+
+
+# Task: Aggregate the number of calls by day of week
+# Solution: Create a dict with keys = day of week, loop through clients to calc sum for each day
+def aggregate_by_day(data):
+    # initialize dict with all days set to 0
+    day_totals = {day: 0 for day in DAYS}   
+    # loop through each clients message count
+    for message_counts in data.values():
+        # loop through each days count with index
+        for i, count in enumerate(message_counts):
+            # add count to appropriate day
+            day_totals[DAYS[i]] += count
+    return day_totals
+    
+
+# Task: Visualise calls as a horizontal hystogram
+# Solution: Both the client and the day of week visualization could be done in the same function.
+#           Need to make sure the labels are padded, so their length is the same.
+def draw_histogram(data):
+    # check for empty input data
+    if not data:
+        return ''
+    
+    labels = data.keys()
+    max_len = max(len(label) for label in labels)
+    hist_string = ''
+    for label in labels:
+        hist_string += label + ' '*(max_len-len(label)+1) +':' + '*'*data[label] + '\n'
+    return hist_string
+
+
+
+#============================================================================================================
+# UNIT TESTS 
+#============================================================================================================
+
+#------------------------------------------------------------------------------------------------------------
+# read_input()
+#------------------------------------------------------------------------------------------------------------
+
+def test_read_input_common():
+    # Can't test automatically since it uses input()
+    # Manual test: run program and enter 5 clients with valid data
+    return
+
+def test_read_input_edge():
+    # Can't test automatically since it uses input()
+    # Manual test: try entering less than 5 clients (should reject)
+    return
+
+def test_read_input_special():
+    # Can't test automatically since it uses input()
+    # Manual test: try entering non-integer for number of clients
+    return  
+  
+
+#------------------------------------------------------------------------------------------------------------
+# aggregate_by_client()
+#------------------------------------------------------------------------------------------------------------
+
 def test_aggregate_by_client_common():
     data = {
         'A': [1,2,3,4,5,6,7],
@@ -43,8 +142,7 @@ def test_aggregate_by_client_common():
     result = aggregate_by_client(data)
     expected = {'A': 28, 'B': 14}
     assert result == expected, f"Expected {expected}, got {result}"
-    print("test_aggregate_by_client_common PASSED")
-
+    
 def test_aggregate_by_client_edge():
     data = {
         'A': [1,1,1,1,1,1,1],
@@ -52,273 +150,118 @@ def test_aggregate_by_client_edge():
     result = aggregate_by_client(data)
     expected = {'A': 7}
     assert result == expected, f"Expected {expected}, got {result}"
-    print ("test_aggregate_by_client_edge PASSED")
     
 def test_aggregate_by_client_special():
     data = {}
     result = aggregate_by_client(data)
     expected = {}
     assert result == expected, f"Expected {expected}, got {result}"
-    print ("test_aggregate_by_client_special PASSED")
     
-   
 
+#------------------------------------------------------------------------------------------------------------
+# aggregate_by_day()
+#------------------------------------------------------------------------------------------------------------
 
-
-#===============================================================================
-
-def aggregate_by_day(data, days):
-    """
-    Purpose: Calculate total messages per day across all clients
-    Parameters: data (dict) - dictionary with client names as keys and
-                lists of daily message counts as values
-                days (list) - list of day names in order
-    Returns: dict - dictionary with day names as keys and total
-             message counts as values
-    Author: Yuri
-    Date: 2026-02-02
-    """
-    # initialize dict with all days set to 0
-    day_totals = {day: 0 for day in days}
-
-    # loop through each clients message count
-    for message_count in data.values():
-        # loop through each days count with index
-        for i, count in enumerate(message_count):
-            # add count to appropriate day
-            day_totals[days[i]] += count
-    return day_totals
-    
 def test_aggregate_by_day_common():
-    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     data = {
         'A': [1, 2, 3, 4, 5, 6, 7],
         'B': [1, 1, 1, 1, 1, 1, 1]
     }
-    result = aggregate_by_day(data,days)
+    result = aggregate_by_day(data)
     expected = {
         'Sunday': 2, 'Monday': 3, 'Tuesday': 4, 'Wednesday': 5,
         'Thursday': 6, 'Friday': 7, 'Saturday': 8
     }
     assert result == expected, f"Expected {expected}, got {result}"
-    print("test_aggregate_by_day_common PASSED")
 
 def test_aggregate_by_day_edge():
-    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    data = {
-        'A': [0, 2, 3, 4, 5, 6, 7],
-        'B': [0, 1, 1, 1, 1, 1, 1]
-    }
-    result = aggregate_by_day(data, days)
+    # edge case: some days have zero messages
+    data = {'A': [0, 2, 3, 4, 5, 6, 7]}
+    result = aggregate_by_day(data)
     expected = {
-        'Sunday': 0, 'Monday': 3, 'Tuesday': 4, 'Wednesday': 5,
-        'Thursday': 6, 'Friday': 7, 'Saturday': 8
+        'Sunday': 0, 'Monday': 2, 'Tuesday': 3, 'Wednesday': 4,
+        'Thursday': 5, 'Friday': 6, 'Saturday': 7
     }
     assert result == expected, f"Expected {expected}, got {result}"
-    print("test_aggregate_by_day_edge PASSED")
-
 
 def test_aggregate_by_day_special():
-    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    # special: no clients at all
     data = {}
-    result = aggregate_by_day(data, days)
+    result = aggregate_by_day(data)
     expected = {
         'Sunday': 0, 'Monday': 0, 'Tuesday': 0, 'Wednesday': 0,
         'Thursday': 0, 'Friday': 0, 'Saturday': 0
     }
     assert result == expected, f"Expected {expected}, got {result}"
-    print("test_aggregate_by_day_special PASSED")
 
 
-#===============================================================================
+#------------------------------------------------------------------------------------------------------------
+# draw_histogram()
+#------------------------------------------------------------------------------------------------------------
 
-def create_histogram(label_data_dict, label_prefix=""):
-    """
-    Purpose: Generate formatted horizontal histogram string
-    Parameters: label_data_dict (dict) - dictionary with labels as keys and
-                counts as values
-                label_prefix (str) - optional prefix for labels (e.g., "client ")
-    Returns: str - formatted histogram with asterisks representing counts
-    Author: Yuri
-    Date: 2026-02-02
-    """
-    # Handle empty dictionary
-    if not label_data_dict:
-        return ""
+def test_draw_histogram_common():
+    data = {'Apple': 5, 'Banana': 3}
+    result = draw_histogram(data)
+    # check it has the right labels
+    assert 'Apple' in result
+    assert 'Banana' in result
+    # check total asterisks
+    assert result.count('*') == 8  # 5 + 3
 
-    # Find the longest label for alignment
-    max_label_length = max(len(label_prefix + label) for label in label_data_dict.keys())
-
-    # Create histogram lines
-    histogram_lines = []
-    for label, count in label_data_dict.items():
-        full_label = label_prefix + label
-        # Pad label to align colons
-        padded_label = full_label.ljust(max_label_length)
-        # Create asterisk bar
-        bar = '*' * count
-        histogram_lines.append(f"{padded_label} :{bar}")
-
-    return '\n'.join(histogram_lines)
-
-#
-# UNIT TESTS create_histogram
-#
-def test_create_histogram_common():
-    """Test create_histogram with common case: multiple entries"""
-    data = {'Apple': 10, 'Banana': 5}
-    result = create_histogram(data, "client ")
-    expected_lines = result.split('\n')
-
-    # Check that we have 2 lines
-    assert len(expected_lines) == 2, f"Expected 2 lines, got {len(expected_lines)}"
-
-    # Check that asterisks match counts
-    assert expected_lines[0].count('*') == 10, "Apple should have 10 asterisks"
-    assert expected_lines[1].count('*') == 5, "Banana should have 5 asterisks"
-
-    # Check that 'client' prefix appears
-    assert 'client' in result, "Should contain 'client' prefix"
-
-    print("test_create_histogram_common PASSED")
-
-
-def test_create_histogram_edge():
-    """Test create_histogram with edge case: zero values"""
+def test_draw_histogram_edge():
+    # edge: zero value
     data = {'Apple': 0}
-    result = create_histogram(data)
+    result = draw_histogram(data)
+    assert 'Apple' in result
+    assert '*' not in result  # no asterisks for zero
 
-    assert '*' not in result, "Should have no asterisks for zero count"
-    assert 'Apple' in result, "Should contain the label"
-    assert ':' in result, "Should still have colon"
-
-    print("test_create_histogram_edge PASSED")
-
-
-def test_create_histogram_special():
-    """Test create_histogram with special case: empty dictionary"""
+def test_draw_histogram_special():
+    # special: empty dict
     data = {}
-    result = create_histogram(data)
-    expected = ""
-
-    assert result == expected, f"Expected empty string, got '{result}'"
-
-    print("test_create_histogram_special PASSED")
+    result = draw_histogram(data)
+    assert result == ''  # should return empty string
 
 
-#===============================================================================
+#------------------------------------------------------------------------------------------------------------
+# Unit test consolidator()
+#------------------------------------------------------------------------------------------------------------
 
-def get_client_data():
-    """
-    Purpose: Input and validate data for one client
-    Parameters: None (gets input from user via terminal)
-    Returns: tuple - (client_name (str), message_counts (list of 7 ints))
-    Author: Yuri
-    Date: 2026-02-02
-    """
-    client_name = input("Enter client name: ").strip()
-
-    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    message_counts = []
-
-    for day in days:
-        while True:
-            try:
-                count = int(input(f"  Messages on {day}: "))
-                if count < 0:
-                    print("    Error: Please enter a non-negative number.")
-                    continue
-                message_counts.append(count)
-                break
-            except ValueError:
-                print("    Error: Please enter a valid integer.")
-
-    return (client_name, message_counts)
+def test_all():
+    tests = [
+        test_read_input_common,
+        test_read_input_edge,
+        test_read_input_special,
+        test_aggregate_by_client_common,
+        test_aggregate_by_client_edge,
+        test_aggregate_by_client_special,
+        test_aggregate_by_day_common,
+        test_aggregate_by_day_edge,
+        test_aggregate_by_day_special,
+        test_draw_histogram_common,
+        test_draw_histogram_edge,
+        test_draw_histogram_special,
+    ]
+    for test in tests:
+        test()
+    print(f'OK: Total {len(tests)} tests passed')
 
 
-#===============================================================================
-
-def main():
-    """
-    Purpose: Main program orchestration - collect data and display histograms
-    Parameters: None
-    Returns: None
-    Author: Yuri
-    Date: 2026-02-02
-    """
-    print("=== Message Tracker ===")
-    print("Enter data for at least 5 clients.\n")
-
-    data = {}
-    days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
-    # Collect data for at least 5 clients
-    num_clients = 0
-    while num_clients < 5:
-        print(f"\nClient #{num_clients + 1}:")
-        client_name, message_counts = get_client_data()
-        data[client_name] = message_counts
-        num_clients += 1
-
-    # Ask if user wants to add more clients
-    while True:
-        add_more = input("\nAdd another client? (yes/no): ").strip().lower()
-        if add_more in ['yes', 'y']:
-            print(f"\nClient #{num_clients + 1}:")
-            client_name, message_counts = get_client_data()
-            data[client_name] = message_counts
-            num_clients += 1
-        elif add_more in ['no', 'n']:
-            break
-        else:
-            print("Please enter 'yes' or 'no'.")
-
-    # Generate and display histograms
-    client_totals = aggregate_by_client(data)
-    day_totals = aggregate_by_day(data, days)
-
-    histogram1 = create_histogram(client_totals, "client ")
-    histogram2 = create_histogram(day_totals)
-
-    # Display histograms
-    print("\n" + "=" * 50)
-    print("Total Messages by Client")
-    print("=" * 50)
-    print(histogram1)
-
-    print("\n" + "=" * 50)
-    print("Total Messages by Day")
-    print("=" * 50)
-    print(histogram2)
-    print()
+#============================================================================================================
 
 
-#===============================================================================
-# PROGRAM ENTRY POINT
-#===============================================================================
-
+    
 if __name__ == "__main__":
-    import sys
 
-    # Run tests if --test flag is provided
-    if len(sys.argv) > 1 and sys.argv[1] == "--test":
-        print("\n=== Running Unit Tests ===\n")
-
-        print("Testing aggregate_by_client:")
-        test_aggregate_by_client_common()
-        test_aggregate_by_client_edge()
-        test_aggregate_by_client_special()
-
-        print("\nTesting aggregate_by_day:")
-        test_aggregate_by_day_common()
-        test_aggregate_by_day_edge()
-        test_aggregate_by_day_special()
-
-        print("\nTesting create_histogram:")
-        test_create_histogram_common()
-        test_create_histogram_edge()
-        test_create_histogram_special()
-
-        print("\n=== All tests passed! ===\n")
+    if input("Enter 't' if you want to run the tests: ") == 't':
+        test_all()
+    
     else:
-        main()
+        input_data = read_input()
+        data_by_client = aggregate_by_client(input_data)
+        data_by_day = aggregate_by_day(input_data)
+
+        print('\n' + SEPARATOR + '\n' + 'Number of Messages per Client\n' + SEPARATOR) 
+        print(draw_histogram(aggregate_by_client(input_data)))
+               
+        print('\n' + SEPARATOR + '\n' + 'Number of Messages per Day\n' + SEPARATOR) 
+        print(draw_histogram(aggregate_by_day(input_data)))
