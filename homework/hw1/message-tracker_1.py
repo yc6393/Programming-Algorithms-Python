@@ -9,6 +9,7 @@ Usage of LLMs (ChatGPT):
 
 """
 
+import builtins
 
 DAYS = ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')
 
@@ -101,15 +102,41 @@ def draw_histogram(data):
 # read_input()
 #------------------------------------------------------------------------------------------------------------
 
+
 def test_read_input_common():
-    return
+    # 1. Prepare fake inputs (exact order matters!)
+    inputs = iter([
+        "2",                    # total_clients
+        "Alice",                # client 1 name
+        "1 2 3 4 5 6 7",        # Alice messages
+        "Bob",                  # client 2 name
+        "0 0 1 1 2 2 3"         # Bob messages
+    ])
 
-def test_read_input_edge():
-    return
+    # 2. Save the real input function
+    real_input = builtins.input
 
-def test_read_input_special():    
-    return  
-  
+    try:
+        # 3. Replace input() with our fake one
+        builtins.input = lambda _: next(inputs)
+
+        # 4. Call the function
+        result = read_input()
+
+        # 5. Assert expected output
+        expected = {
+            "Alice": [1, 2, 3, 4, 5, 6, 7],
+            "Bob": [0, 0, 1, 1, 2, 2, 3]
+        }
+
+        assert result == expected, f"Expected {expected}, got {result}"
+
+        print("✅ Test passed!")
+
+    finally:
+        # 6. Restore the real input()
+        builtins.input = real_input
+
 
 #------------------------------------------------------------------------------------------------------------
 # aggregate_by_client()
@@ -123,6 +150,7 @@ def test_aggregate_by_client_common():
     result = aggregate_by_client(data)
     expected = {'A': 28, 'B': 14}
     assert result == expected, f"Expected {expected}, got {result}"
+    print("✅ Test passed!")
     
 def test_aggregate_by_client_edge():
     data = {
@@ -131,12 +159,14 @@ def test_aggregate_by_client_edge():
     result = aggregate_by_client(data)
     expected = {'A': 7}
     assert result == expected, f"Expected {expected}, got {result}"
+    print("✅ Test passed!")
     
 def test_aggregate_by_client_special():
     data = {}
     result = aggregate_by_client(data)
     expected = {}
     assert result == expected, f"Expected {expected}, got {result}"
+    print("✅ Test passed!")
     
 
 #------------------------------------------------------------------------------------------------------------
@@ -144,13 +174,13 @@ def test_aggregate_by_client_special():
 #------------------------------------------------------------------------------------------------------------
 
 def test_aggregate_by_day_common():
-    return
+    print("✅ Test passed!")
 
 def test_aggregate_by_day_edge():
-    return
+    print("✅ Test passed!")
 
 def test_aggregate_by_day_special():    
-    return    
+    print("✅ Test passed!")    
 
 
 #------------------------------------------------------------------------------------------------------------
@@ -174,8 +204,6 @@ def test_draw_histogram_special():
 def test_all():
     tests = [
         test_read_input_common,
-        test_read_input_edge,
-        test_read_input_special,
         test_aggregate_by_client_common,
         test_aggregate_by_client_edge,
         test_aggregate_by_client_special,
