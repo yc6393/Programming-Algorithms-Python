@@ -2,6 +2,7 @@
 Usage of LLMs (ChatGPT, Claude):
     - Help with finalized formatting and structure
     - To build checks for read_input using builtins
+    - To create README.md
 """
 
 
