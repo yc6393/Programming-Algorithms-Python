@@ -28,12 +28,15 @@ def read_input():
     while True:
         try:
             total_clients = int(input('Enter the total number of clients: '))
+            if total_clients < 5:
+                print("Error: Must enter at least 5 clients")
+                continue
+            break
         except ValueError:
-            print("Effor: Please enter an integer")
-        break
+            print("Error: Please enter an integer")
 
     for i in range(total_clients):
-        client = input('Enter the client name: ')
+        client = input(f'Enter the name for client {i+1}: ')
 
         while True:
             raw = input(
@@ -48,6 +51,12 @@ def read_input():
             except ValueError:
                 print("Error: All values must be integers.")
                 continue
+            
+            # check for negative values
+            if any(msg < 0 for msg in messages):
+                print("Error: Message counts cannot be negative.")
+                continue
+            
             # passed all checks
             break
 
@@ -84,6 +93,10 @@ def aggregate_by_day(data):
 # Solution: Both the client and the day of week visualization could be done in the same function.
 #           Need to make sure the labels are padded, so their length is the same.
 def draw_histogram(data):
+    # check for empty input data
+    if not data:
+        return ''
+    
     labels = data.keys()
     max_len = max(len(label) for label in labels)
     hist_string = ''
@@ -102,12 +115,18 @@ def draw_histogram(data):
 #------------------------------------------------------------------------------------------------------------
 
 def test_read_input_common():
+    # Can't test automatically since it uses input()
+    # Manual test: run program and enter 5 clients with valid data
     return
 
 def test_read_input_edge():
+    # Can't test automatically since it uses input()
+    # Manual test: try entering less than 5 clients (should reject)
     return
 
-def test_read_input_special():    
+def test_read_input_special():
+    # Can't test automatically since it uses input()
+    # Manual test: try entering non-integer for number of clients
     return  
   
 
@@ -144,13 +163,36 @@ def test_aggregate_by_client_special():
 #------------------------------------------------------------------------------------------------------------
 
 def test_aggregate_by_day_common():
-    return
+    data = {
+        'A': [1, 2, 3, 4, 5, 6, 7],
+        'B': [1, 1, 1, 1, 1, 1, 1]
+    }
+    result = aggregate_by_day(data)
+    expected = {
+        'Sunday': 2, 'Monday': 3, 'Tuesday': 4, 'Wednesday': 5,
+        'Thursday': 6, 'Friday': 7, 'Saturday': 8
+    }
+    assert result == expected, f"Expected {expected}, got {result}"
 
 def test_aggregate_by_day_edge():
-    return
+    # edge case: some days have zero messages
+    data = {'A': [0, 2, 3, 4, 5, 6, 7]}
+    result = aggregate_by_day(data)
+    expected = {
+        'Sunday': 0, 'Monday': 2, 'Tuesday': 3, 'Wednesday': 4,
+        'Thursday': 5, 'Friday': 6, 'Saturday': 7
+    }
+    assert result == expected, f"Expected {expected}, got {result}"
 
-def test_aggregate_by_day_special():    
-    return    
+def test_aggregate_by_day_special():
+    # special: no clients at all
+    data = {}
+    result = aggregate_by_day(data)
+    expected = {
+        'Sunday': 0, 'Monday': 0, 'Tuesday': 0, 'Wednesday': 0,
+        'Thursday': 0, 'Friday': 0, 'Saturday': 0
+    }
+    assert result == expected, f"Expected {expected}, got {result}"
 
 
 #------------------------------------------------------------------------------------------------------------
@@ -158,13 +200,26 @@ def test_aggregate_by_day_special():
 #------------------------------------------------------------------------------------------------------------
 
 def test_draw_histogram_common():
-    return
+    data = {'Apple': 5, 'Banana': 3}
+    result = draw_histogram(data)
+    # check it has the right labels
+    assert 'Apple' in result
+    assert 'Banana' in result
+    # check total asterisks
+    assert result.count('*') == 8  # 5 + 3
 
 def test_draw_histogram_edge():
-    return
+    # edge: zero value
+    data = {'Apple': 0}
+    result = draw_histogram(data)
+    assert 'Apple' in result
+    assert '*' not in result  # no asterisks for zero
 
-def test_draw_histogram_special():    
-    return    
+def test_draw_histogram_special():
+    # special: empty dict
+    data = {}
+    result = draw_histogram(data)
+    assert result == ''  # should return empty string
 
 
 #------------------------------------------------------------------------------------------------------------
@@ -210,6 +265,3 @@ if __name__ == "__main__":
                
         print('\n' + SEPARATOR + '\n' + 'Number of Messages per Day\n' + SEPARATOR) 
         print(draw_histogram(aggregate_by_day(input_data)))
-        
-
-    
