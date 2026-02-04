@@ -1,54 +1,84 @@
-# Homework 1 - Message Tracker
+# HW1 - Client Message Visualization Program
 
-## Assignment
-Create a program to visualize client message data as horizontal histograms.
+**Course:** Tech.UB.27.002 Spring 2026  
+**Professor:** Guthrie Collin
+
+## Overview
+
+This program helps visualize client messaging data by creating horizontal histograms. It allows users to input client names and their daily message counts, then displays two visualizations:
+
+1. Total messages sent per client
+2. Total messages sent per day of the week
 
 ## Requirements
-- Input data for 5+ clients across 7 days
-- Display histogram by client
-- Display histogram by day of week
-- Unit tests for each function (3 per function)
 
-## How to Run
+- Python 3.x
+
+## Usage
+
+Run the program from the command line:
+
 ```bash
-python message_tracker.py
+python hw1.py
 ```
 
-## Status
-- [x] Design functions
-- [ ] Implement input logic
-- [ ] Implement histogram display
-- [ ] Write unit tests
+### Running the Program
+
+When prompted, enter any key (except 't') to run the main program:
+
+1. Enter the total number of clients (minimum 5)
+2. For each client, enter:
+   - Client name
+   - 7 space-separated integers representing messages for each day (Sunday through Saturday)
+3. View the generated histograms
+
+### Running Unit Tests
+
+When prompted, enter `t` to run all unit tests:
+
+```
+Enter 't' if you want to run the tests: t
+OK: Total 12 tests passed
 ```
 
----
+## Sample Output
 
-## Setting It Up Now
-
-Here's what to do in GitHub Desktop + VS Code:
-
-### Step 1: Create the Folders
-
-In VS Code, create this structure:
 ```
-homework/
-  hw1/
-projects/
-notes/
-```
+-------------------------
+Number of Messages per Client
+-------------------------
+Alice   :****************************
+Bob     :*********
+Charlie :*******
 
-### Step 2: Add Placeholder Files
-
-Git doesn't track empty folders, so add a README.md in each:
-```
-homework/hw1/README.md    ← Assignment notes
-projects/README.md        ← "Projects will go here"
+-------------------------
+Number of Messages per Day
+-------------------------
+Sunday    :**
+Monday    :****
+Tuesday   :******
+Wednesday :********
+Thursday  :**********
+Friday    :************
+Saturday  :**************
 ```
 
-### Step 3: Add .gitignore and Root README.md
+## Program Structure
 
-### Step 4: Commit in GitHub Desktop
-```
-Summary: "Set up repository structure"
-→ Commit to main
-→ Push origin
+| Function | Description |
+|----------|-------------|
+| `read_input()` | Collects and validates user input for client names and daily message counts |
+| `aggregate_by_client(data)` | Sums total messages per client |
+| `aggregate_by_day(data)` | Sums total messages per day of the week |
+| `draw_histogram(data)` | Generates a horizontal histogram string from aggregated data |
+
+## Unit Tests
+
+Each function includes three test cases following the common/edge/special pattern:
+
+| Function | Common | Edge | Special |
+|----------|--------|------|---------|
+| `read_input` | 5 clients, normal values | All zeros for a client | Large message counts |
+| `aggregate_by_client` | Multiple clients | Single client | Empty dictionary |
+| `aggregate_by_day` | Multiple clients | Zero messages on some days | Empty dictionary |
+| `draw_histogram` | Multiple items | Zero value | Empty dictionary |
