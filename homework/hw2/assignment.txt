@@ -1,0 +1,31 @@
+Tech.UB.27.002 Spring 2026 with Professor Guthrie Collin: Homework 2
+
+
+Overall Description of Program being created across Homeworks 2, 3 and 4:
+Your friend is concerned about protecting her friends and family information in her smartphone’s address book. But she also wants the social graph information available when she links the address book to social media platforms. Her problem has inspired you to build a prototype “Social Address Book” program in Python. You will develop this prototype in three parts in homeworks 2, 3, and 4.  In Homework 2, you will create the base Address Book program using Object Oriented Programming (14 points). In Homework 3, you will add sorting and searching functionality to the Address Book (8 points). In Homework 4, you will evolve the program into a Social Address Book by adding social graph functionality (8 points).
+Specific Assignment for Homework 2:
+To start your journey towards creating the Social Address Book, you first need a basic Address Book program. You will create this multi-file program using an Object Oriented Programming approach together with the PSP method. Your Address Book will be a Python terminal based program. It will enable a user to add, view, update and delete Contacts from the book. A single Contact must be described by at least one of these data fields: name, email address, or phone number. A user must have the ability to add, view, update and delete data for each field for a specific Contact. The Address Book must enable a user to merge two Contacts in the book into a single Contact. Along with the functionality described above, your program must have a menu that allows the user to choose between: (1) running the unit tests for classes supporting the program; (2) running a demonstration version of a user working with the Address Book; or, (3) using the Address Book directly. (For an example of a program with these three choices, inclusive of a demonstration such as #2, review the “answer” code for Class06’s Lab.)
+Code Requirements: Your program must conform to these requirements:
+1. Program centers around an Address Book class that has zero to many Contact classes. All changes to classes and their attributes happen through class methods.
+2. Every Class is stored in its own *.py file and the program runs with all files sitting in a single program directory as described in the course’s Multi-File Program Template.
+3. Program enables the user to create, view, update, and delete Contacts from the Address Book.
+4. Program enables the user to create, view, update, and delete the name, email and phone number fields in each Contact.
+5. The Address Book must prevent a user from adding duplicate Contacts. 
+6. The Address Book must enable a user to merge two Contacts into one Contact.
+7. At least one of your Classes implements one type of Dunder methods: string representation, numeric or comparison.
+8. The program must have a README.txt file as described in the Multi-File Program Template.
+9. When executed, the program must enable a user to choose between: (1) running tests; (2) a demo program; or, (3) using the Address Book program directly.
+10. Every Class must have at least three unit tests per method (one test for each case type: common, edge and special). All unit tests must be stored in a unified test.py file as described in the Multi-File Program Template.
+Grading Rubric:
+Point Value
+	Homework 2 Item
+	4
+	ANALYZE + DESIGN work quality (2 points) and program’s use of KISS, DRY and SRP principles (2 points)
+	10
+	Fulfillment of Assignment through Code Requirements (1 point per requirement)
+	14
+	TOTAL POINTS AVAILABLE FOR HOMEWORK 2
+	
+
+IMPORTANT NOTE on use of ChatGPT, Gemini, or similar Large Language Models: 
+You are permitted to use an LLM tool for this homework assignment, however, you must cite your use of such tools in the completion of your assignment including a description of how you used those tools. Add this citation and detail to the TOP of your code file using comments.
