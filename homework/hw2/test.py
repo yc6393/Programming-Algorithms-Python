@@ -91,8 +91,8 @@ def test_contact_set_get_phone_edge():
 def test_contact_set_get_phone_special():
     """set phone with international format"""
     c = Contact(name="Yuri")
-    c.set_phone("+1 (212) 555-9999")
-    assert c.get_phone() == "+1 (212) 555-9999"
+    c.set_phone("+1 (646) 555-9999")
+    assert c.get_phone() == "+1 (646) 555-9999"
 
 
 # __str__
@@ -212,11 +212,12 @@ def test_update_contact_edge():
     assert result is False
 
 def test_update_contact_special():
-    """passing '' clears a field to None"""
+    """clearing the last remaining field returns False and leaves contact unchanged"""
     book = AddressBook()
-    book.add_contact(Contact(name="Yuri", email="yuri@gmail.com"))
-    book.update_contact(0, email='')
-    assert book.get_contact(0).get_email() is None
+    book.add_contact(Contact(name="Yuri"))
+    result = book.update_contact(0, name='')
+    assert result is False
+    assert book.get_contact(0).get_name() == "Yuri"
 
 
 # delete_contact

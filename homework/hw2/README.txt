@@ -1,4 +1,5 @@
-Social Address Book — Homework 2
+Yuri Chentsov
+Homework 2: Social Address Book
 Tech.UB.27.002 Spring 2026
 =====================================
 
@@ -14,13 +15,13 @@ From the hw2/ directory, run:
     python main.py
 
 You will be prompted to choose one of three modes:
-    1. Run unit tests  — runs all automated tests and reports pass/fail
-    2. Run demo        — shows an automated walkthrough of all features
+    1. Run unit tests   — runs all automated tests and reports pass/fail
+    2. Run demo         — automated walkthrough of all features
     3. Use Address Book — interactive terminal program
 
 FILE STRUCTURE
 --------------
-main.py         Entry point. Contains the main menu, interactive UI, and demo.
+main.py         Entry point. Main menu, interactive UI, and demo.
 contact.py      Contact class. Manages a single contact's name, email, and phone.
 address_book.py AddressBook class. Manages a collection of Contact objects.
 test.py         All unit tests (3 per method: common, edge, and special cases).
@@ -29,24 +30,18 @@ README.txt      This file.
 CLASSES
 -------
 Contact (contact.py)
-  - Fields: name, email, phone (at least one required)
-  - Methods: get/set for each field
-  - Dunder methods: __str__, __eq__, __repr__
+  - Attributes: name, email, phone (at least one required at creation)
+  - Methods: get_name, set_name, get_email, set_email, get_phone, set_phone
+  - Dunder methods: __str__ (display), __eq__ (duplicate detection)
 
 AddressBook (address_book.py)
+  - Attributes: contacts (internal list of Contact objects)
   - Methods: add_contact, get_contact, update_contact, delete_contact,
              merge_contacts, list_contacts, count
 
-DESIGN PRINCIPLES
------------------
-KISS  — Each method does one simple, clear thing.
-DRY   — Shared logic (e.g., pick_contact, prompt_fields) is factored into helpers.
-SRP   — Contact only manages a single contact's data; AddressBook only manages
-        the collection; main.py only handles user interaction.
 
-LLM USAGE CITATION
-------------------
-Claude (claude-sonnet-4-6) was used to assist with the design and implementation
-of this program, including: class structure, getter/setter patterns, dunder method
-implementation, test case design, and overall program organization. The student
-directed the design decisions and reviewed all generated code.
+
+LLM USAGE
+---------
+Claude Code was used to help with dunder methods, duplicate detection logic,
+merge logic, test case design, and overall program organization.

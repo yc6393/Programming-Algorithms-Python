@@ -58,21 +58,27 @@ class AddressBook:
     # ========== FIELD UPDATE ==========
 
     # Task: update one or more fields in an existing contact
-    # Solution: look up the contact by index, then use appropriate setter for each argument.
-    #           passing '' should clear a field, and omitting an argument leaves that field unchanged
+    # Solution: look up the contact by index, then compute what each field would become
+    #           after the update. Reject if the result would leave all fields empty,
+    #           since a contact must always have at least one field.
+    #           passing '' clears a field, omitting an argument leaves it unchanged.
     def update_contact(self, index, name=None, email=None, phone=None):
-        # get contact, returns False if index invalid
+        # get contact, returns False if invalid
         contact = self.get_contact(index)
         if contact is None:
             return False
-        # only update fields that were passed
-        if name is not None:
-            # if '', set as None, else set as name entered
-            contact.set_name(name if name != '' else None)
-        if email is not None:
-            contact.set_email(email if email != '' else None)
-        if phone is not None:
-            contact.set_phone(phone if phone != '' else None)
+        # compute what each field will be after the update
+        # keep the existing value if the argument was not passed
+        new_name  = (name  if name  != '' else None) if name  is not None else contact.get_name()
+        new_email = (email if email != '' else None) if email is not None else contact.get_email()
+        new_phone = (phone if phone != '' else None) if phone is not None else contact.get_phone()
+        # reject if all fields would end up empty
+        if new_name is None and new_email is None and new_phone is None:
+            return False
+        # apply the updates
+        contact.set_name(new_name)
+        contact.set_email(new_email)
+        contact.set_phone(new_phone)
         return True
 
 
