@@ -1,22 +1,20 @@
-# LLM Usage Citation:
-# Claude (claude-sonnet-4-6) was used to help design and implement this program.
-# Specifically: menu structure, interactive loop design, demo sequence,
-# and ensuring KISS, DRY, and SRP principles were followed throughout.
+# LLM Usage:
+# Claude Code to help with menu structure, interactive loop, and demo sequence
 
 from contact import Contact
 from address_book import AddressBook
 from test import test_all
 
 
-# ============================================================
-# Helpers
-# ============================================================
-
 SEPARATOR = '-' * 40
 
 
+# ========== HELPERS ==========
+
+# Task: print all contacts in the book with their index numbers
+# Solution: loop through list_contacts() and print each with its index,
+#           or print a message if the book is empty
 def print_contacts(book):
-    """Print all contacts with their index numbers."""
     if book.count() == 0:
         print("(Address book is empty)")
         return
@@ -24,8 +22,10 @@ def print_contacts(book):
         print(f"  [{i}] {c}")
 
 
+# Task: show the contact list and ask the user to pick one by index
+# Solution: display contacts, read input, validate the index,
+#           return -1 if invalid or the book is empty
 def pick_contact(book, prompt="Enter contact number: "):
-    """Ask user to pick a contact by index. Returns index or -1 on cancel."""
     print_contacts(book)
     if book.count() == 0:
         return -1
@@ -40,22 +40,25 @@ def pick_contact(book, prompt="Enter contact number: "):
         return -1
 
 
-def prompt_fields(require_one=True):
-    """Prompt the user for contact fields. Returns (name, email, phone) or None if invalid."""
+# Task: prompt the user to enter values for name, email, and phone
+# Solution: read each field, treat blank input as None (skipped),
+#           reject and return None if all three fields were left blank
+def prompt_fields():
     print("(Leave a field blank to skip it)")
-    name = input("  Name: ").strip() or None
+    name  = input("  Name: ").strip() or None
     email = input("  Email: ").strip() or None
     phone = input("  Phone: ").strip() or None
-    if require_one and name is None and email is None and phone is None:
+    if name is None and email is None and phone is None:
         print("Error: At least one field is required.")
         return None
     return name, email, phone
 
 
-# ============================================================
-# Interactive Address Book
-# ============================================================
+# ========== INTERACTIVE ADDRESS BOOK ==========
 
+# Task: run the interactive address book with a looping menu
+# Solution: show a menu, read the user's choice, and call the appropriate
+#           AddressBook method. Loop until the user chooses to exit.
 def run_address_book():
     book = AddressBook()
     while True:
@@ -93,20 +96,18 @@ def run_address_book():
             if index == -1:
                 continue
             print(f"Editing: {book.get_contact(index)}")
-            print("Enter new values (leave blank to keep existing, enter a space to clear a field):")
-            name_in = input("  Name: ").strip()
+            print("Enter new values (blank = keep existing, space = clear field):")
+            name_in  = input("  Name: ").strip()
             email_in = input("  Email: ").strip()
             phone_in = input("  Phone: ").strip()
-            # Convert: blank = no change (None arg), single space = clear ('')
-            name_arg  = None if name_in  == '' else (None if name_in  == ' ' else name_in)
-            email_arg = None if email_in == '' else (None if email_in == ' ' else email_in)
-            phone_arg = None if phone_in == '' else (None if phone_in == ' ' else phone_in)
-            # '' sentinel for update_contact means "clear the field"
+            # blank input -> pass None (no change), space input -> pass '' (clear field)
             name_arg  = '' if name_in  == ' ' else (None if name_in  == '' else name_in)
             email_arg = '' if email_in == ' ' else (None if email_in == '' else email_in)
             phone_arg = '' if phone_in == ' ' else (None if phone_in == '' else phone_in)
-            book.update_contact(index, name=name_arg, email=email_arg, phone=phone_arg)
-            print(f"Updated: {book.get_contact(index)}")
+            if not book.update_contact(index, name=name_arg, email=email_arg, phone=phone_arg):
+                print("Error: Update would leave contact empty. At least one field required.")
+            else:
+                print(f"Updated: {book.get_contact(index)}")
 
         elif choice == '4':
             print("\n-- Delete Contact --")
@@ -147,10 +148,11 @@ def run_address_book():
             print("Invalid choice. Please enter 1-6.")
 
 
-# ============================================================
-# Demo
-# ============================================================
+# ========== DEMO ==========
 
+# Task: run an automated demonstration showing all address book features
+# Solution: create a book, then perform a scripted sequence of add, view,
+#           update, merge, and delete operations, printing results at each step
 def run_demo():
     print(f"\n{SEPARATOR}")
     print("DEMO: Social Address Book")
@@ -158,7 +160,7 @@ def run_demo():
 
     book = AddressBook()
 
-    # Add contacts
+    # add three contacts with varying fields
     print("\n[1] Adding contacts...")
     book.add_contact(Contact(name="Alice Smith", email="alice@example.com", phone="555-1001"))
     book.add_contact(Contact(name="Bob Jones", phone="555-2002"))
@@ -166,27 +168,27 @@ def run_demo():
     print("Added 3 contacts:")
     print_contacts(book)
 
-    # Attempt to add a duplicate
+    # show duplicate rejection
     print(f"\n[2] Attempting to add a duplicate of Alice Smith...")
     result = book.add_contact(Contact(name="Alice Smith", email="alice@example.com", phone="555-1001"))
     print(f"Result: {'Added' if result else 'Rejected — duplicate contact'}")
     print(f"Book still has {book.count()} contacts.")
 
-    # View a specific contact
+    # view a single contact by index
     print("\n[3] Viewing contact [1] (Bob Jones):")
     print(f"  {book.get_contact(1)}")
 
-    # Update a contact's email
+    # update a field on an existing contact
     print("\n[4] Updating Bob Jones' email to bob@example.com...")
     book.update_contact(1, email="bob@example.com")
     print(f"  Updated: {book.get_contact(1)}")
 
-    # Update contact [2] (carol) with a name
+    # add a name to a contact that only had an email
     print("\n[5] Adding a name to contact [2] (Carol)...")
     book.update_contact(2, name="Carol White")
     print(f"  Updated: {book.get_contact(2)}")
 
-    # Merge Bob (index 1) and Carol (index 2)
+    # merge two contacts into one
     print("\n[6] Merging Bob Jones [1] and Carol White [2]...")
     print(f"  Before merge:")
     print(f"    [1] {book.get_contact(1)}")
@@ -195,7 +197,7 @@ def run_demo():
     print(f"  After merge, book has {book.count()} contacts:")
     print_contacts(book)
 
-    # Delete Alice
+    # delete a contact
     print("\n[7] Deleting Alice Smith [0]...")
     book.delete_contact(0)
     print(f"  Book now has {book.count()} contact(s):")
@@ -206,9 +208,7 @@ def run_demo():
     print(SEPARATOR)
 
 
-# ============================================================
-# Main Menu
-# ============================================================
+# ========== MAIN ==========
 
 if __name__ == "__main__":
     print(SEPARATOR)
