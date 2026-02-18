@@ -1,23 +1,13 @@
 Yuri Chentsov
 Homework 2: Social Address Book
 Tech.UB.27.002 Spring 2026
-=====================================
+===============================
 
 PROGRAM DESCRIPTION
 -------------------
 A terminal-based Address Book program built with Object Oriented Programming.
 Users can add, view, update, and delete Contacts, with duplicate prevention
 and the ability to merge two Contacts into one.
-
-HOW TO RUN
-----------
-From the hw2/ directory, run:
-    python main.py
-
-You will be prompted to choose one of three modes:
-    1. Run unit tests   — runs all automated tests and reports pass/fail
-    2. Run demo         — automated walkthrough of all features
-    3. Use Address Book — interactive terminal program
 
 FILE STRUCTURE
 --------------
@@ -39,9 +29,6 @@ AddressBook (address_book.py)
   - Methods: add_contact, get_contact, update_contact, delete_contact,
              merge_contacts, list_contacts, count
 
-
-
 LLM USAGE
 ---------
-Claude Code was used to help with dunder methods, duplicate detection logic,
-merge logic, test case design, and overall program organization.
+Used Claude code to help with dunder methods, duplicate detection and merge logic, test cases, and main.py.
